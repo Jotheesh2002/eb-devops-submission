@@ -1,4 +1,3 @@
-cat > setup.sh << 'EOF'
 #!/bin/bash
 set -e
 
@@ -25,6 +24,8 @@ if ! kubectl get namespace ingress-nginx &>/dev/null; then
   helm install ingress-nginx ingress-nginx/ingress-nginx \
     --namespace ingress-nginx --create-namespace \
     --set controller.service.type=NodePort
+  echo "Waiting for ingress-nginx to be ready..."
+  kubectl rollout status deployment/ingress-nginx-controller -n ingress-nginx --timeout=3m
 else
   echo "ingress-nginx already installed."
 fi
@@ -46,7 +47,7 @@ helm upgrade --install "$RELEASE" ./chart \
 
 echo ""
 echo "==> Waiting for rollout..."
-kubectl rollout status deployment/"${RELEASE}" -n "$NAMESPACE" --timeout=2m
+kubectl rollout status deployment/eb-app -n "$NAMESPACE" --timeout=2m
 
 echo ""
 echo "✓ Setup complete!"
@@ -55,5 +56,3 @@ echo "To verify:"
 echo "  kubectl -n $NAMESPACE get pods"
 echo "  kubectl -n $NAMESPACE get ingress"
 echo ""
-EOF
-chmod +x setup.sh
