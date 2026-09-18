@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "eb-app.name" . }}-config
+  labels:
+    {{- include "eb-app.labels" . | nindent 4 }}
+data:
+  APP_NAME: {{ .Values.config.appName | quote }}
+  VERSION: {{ .Values.config.version | quote }}
